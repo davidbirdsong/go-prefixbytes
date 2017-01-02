@@ -1,4 +1,4 @@
-package msgio
+package fixedintpref
 
 import (
 	"bufio"
