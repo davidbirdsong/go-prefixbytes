@@ -38,10 +38,8 @@ type fixedintReader struct {
 	lock sync.Locker
 }
 
-// NewVarintReader wraps an io.Reader with a fixedint msgio framed reader.
+// NewFixedintReader wraps an io.Reader with a fixedint framed reader.
 // The msgio.Reader will read whole messages at a time (using the length).
-// Varints read according to https://golang.org/pkg/encoding/binary/#ReadUfixedint
-// Assumes an equivalent writer on the other side.
 func NewFixedintReader(r io.Reader, prefbytes int) msgio.ReadCloser {
 	return NewFixedintReaderWithPool(
 		bufio.NewReader(r),
@@ -50,10 +48,8 @@ func NewFixedintReader(r io.Reader, prefbytes int) msgio.ReadCloser {
 	)
 }
 
-// NewVarintReaderWithPool wraps an io.Reader with a fixedint msgio framed reader.
+// NewFixedintReaderWithPool wraps an io.Reader with a fixedint msgio framed reader.
 // The msgio.Reader will read whole messages at a time (using the length).
-// Varints read according to https://golang.org/pkg/encoding/binary/#ReadUfixedint
-// Assumes an equivalent writer on the other side. It uses a given mpool.Pool
 func NewFixedintReaderWithPool(r io.Reader, prefbytes int, p *mpool.Pool) msgio.ReadCloser {
 	if p == nil {
 		panic("nil pool")
