@@ -1,4 +1,4 @@
-package fixedintpref
+package prefixbytes
 
 import (
 	"bufio"
