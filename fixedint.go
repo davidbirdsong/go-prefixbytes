@@ -16,13 +16,13 @@ var PrefixBytes int = 2
 func readInt(b []byte) uint32 {
 	// equivalnt of return int32(binary.LittleEndian.Uint32(b))
 	switch cap(b) {
-	case 8:
+	case 1:
 		return uint32(b[0])
-	case 16:
+	case 2:
 		return uint32(binary.LittleEndian.Uint16(b))
-	case 32:
+	case 4:
 		return uint32(binary.LittleEndian.Uint32(b))
-	case 64:
+	case 8:
 		return uint32(binary.LittleEndian.Uint64(b))
 	}
 	return 0
@@ -56,7 +56,7 @@ func NewFixedintReaderWithPool(r io.Reader, prefbytes int, p *mpool.Pool) msgio.
 	}
 	return &fixedintReader{
 		R:    r,
-		lbuf: make([]byte, prefbytes),
+		lbuf: make([]byte, prefbytes/8),
 		next: -1,
 		pool: p,
 		lock: new(sync.Mutex),
