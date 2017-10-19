@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"sync"
 
 	msgio "github.com/jbenet/go-msgio"
 	mpool "github.com/jbenet/go-msgio/mpool"
@@ -35,7 +34,6 @@ type fixedintReader struct {
 	lbuf []byte
 	next int
 	pool *mpool.Pool
-	lock sync.Locker
 }
 
 // NewFixedintReader wraps an io.Reader with a fixedint framed reader.
@@ -59,7 +57,6 @@ func NewFixedintReaderWithPool(r io.Reader, prefbytes int, p *mpool.Pool) msgio.
 		lbuf: make([]byte, prefbytes/8),
 		next: -1,
 		pool: p,
-		lock: new(sync.Mutex),
 	}
 }
 
@@ -67,8 +64,6 @@ func NewFixedintReaderWithPool(r io.Reader, prefbytes int, p *mpool.Pool) msgio.
 // WARNING: like Read, NextMsgLen is destructive. It reads from the internal
 // reader.
 func (s *fixedintReader) NextMsgLen() (int, error) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
 	return s.nextMsgLen()
 }
 
@@ -87,8 +82,6 @@ func (s *fixedintReader) nextMsgLen() (int, error) {
 }
 
 func (s *fixedintReader) Read(msg []byte) (int, error) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
 
 	length, err := s.nextMsgLen()
 	if err != nil {
@@ -104,8 +97,6 @@ func (s *fixedintReader) Read(msg []byte) (int, error) {
 }
 
 func (s *fixedintReader) ReadMsg() ([]byte, error) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
 
 	length, err := s.nextMsgLen()
 	if err != nil {
@@ -127,8 +118,6 @@ func (s *fixedintReader) ReleaseMsg(msg []byte) {
 }
 
 func (s *fixedintReader) Close() error {
-	s.lock.Lock()
-	defer s.lock.Unlock()
 
 	if c, ok := s.R.(io.Closer); ok {
 		return c.Close()
