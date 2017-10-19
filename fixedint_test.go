@@ -36,7 +36,7 @@ func TestMsgStream(t *testing.T) {
 
 	var buf = &bytes.Buffer{}
 	for _, b := range msgs {
-		pref := make([]byte, 16)
+		pref := make([]byte, 2)
 		binary.LittleEndian.PutUint16(pref, uint16(len(b)))
 		buf.Write(pref)
 		buf.Write(b)
